@@ -87,7 +87,7 @@ class Game {
         baseScene.rootNode.addChildNode(cameraNode)
         
         // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 6, z: 24)
+        cameraNode.position = SCNVector3(x: 0, y: 12, z: 24)
         
         let children = self.baseCharacter.rootNode.childNodes
         for child in children {
@@ -99,6 +99,12 @@ class Game {
         
         //assign player's node to node that handles movement
         self.player.node = self.baseScene.rootNode.childNode(withName: level.BaseRig, recursively: true)
+        initPlayerPosition()
+    }
+    
+    func initPlayerPosition()
+    {
+        self.player.directionAngle = Float(180).degreesToRadians
     }
     
     func setUpAnimations() {
