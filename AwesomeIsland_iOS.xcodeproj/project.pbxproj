@@ -12,6 +12,9 @@
 		28B2BE9720BA6F6100514176 /* JoyStickView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B2BE9620BA6F6100514176 /* JoyStickView.swift */; };
 		28B2BE9920BA6F9800514176 /* CoreGraphics+Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B2BE9820BA6F9800514176 /* CoreGraphics+Additions.swift */; };
 		28B2BE9B20BA7CC400514176 /* PlayerNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B2BE9A20BA7CC400514176 /* PlayerNode.swift */; };
+		28B2BE9D20BB102E00514176 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B2BE9C20BB102E00514176 /* Game.swift */; };
+		28B2BEA020BB1B6500514176 /* Level1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B2BE9F20BB1B6500514176 /* Level1.swift */; };
+		28B2BEA220BB1B9300514176 /* Level.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28B2BEA120BB1B9300514176 /* Level.swift */; };
 		28F0478720B8F7C200FE9A7F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28F0478620B8F7C200FE9A7F /* AppDelegate.swift */; };
 		28F0478920B8F7C200FE9A7F /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 28F0478820B8F7C200FE9A7F /* art.scnassets */; };
 		28F0478B20B8F7C200FE9A7F /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28F0478A20B8F7C200FE9A7F /* GameViewController.swift */; };
@@ -27,6 +30,9 @@
 		28B2BE9620BA6F6100514176 /* JoyStickView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoyStickView.swift; sourceTree = "<group>"; };
 		28B2BE9820BA6F9800514176 /* CoreGraphics+Additions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreGraphics+Additions.swift"; sourceTree = "<group>"; };
 		28B2BE9A20BA7CC400514176 /* PlayerNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerNode.swift; sourceTree = "<group>"; };
+		28B2BE9C20BB102E00514176 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		28B2BE9F20BB1B6500514176 /* Level1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Level1.swift; sourceTree = "<group>"; };
+		28B2BEA120BB1B9300514176 /* Level.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Level.swift; sourceTree = "<group>"; };
 		28F0478320B8F7C200FE9A7F /* AwesomeIsland_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AwesomeIsland_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		28F0478620B8F7C200FE9A7F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		28F0478820B8F7C200FE9A7F /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -49,6 +55,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		28B2BE9E20BB1B4500514176 /* Levels */ = {
+			isa = PBXGroup;
+			children = (
+				28B2BE9F20BB1B6500514176 /* Level1.swift */,
+			);
+			path = Levels;
+			sourceTree = "<group>";
+		};
 		28F0477A20B8F7C200FE9A7F = {
 			isa = PBXGroup;
 			children = (
@@ -77,6 +91,8 @@
 				28F0478F20B8F7E800FE9A7F /* Assets.xcassets */,
 				28F0479120B8F7E800FE9A7F /* LaunchScreen.storyboard */,
 				28F0479420B8F7E800FE9A7F /* Info.plist */,
+				28B2BE9C20BB102E00514176 /* Game.swift */,
+				28B2BE9E20BB1B4500514176 /* Levels */,
 			);
 			path = AwesomeIsland_iOS;
 			sourceTree = "<group>";
@@ -89,6 +105,7 @@
 				28B2BE9620BA6F6100514176 /* JoyStickView.swift */,
 				28B2BE9820BA6F9800514176 /* CoreGraphics+Additions.swift */,
 				28B2BE9A20BA7CC400514176 /* PlayerNode.swift */,
+				28B2BEA120BB1B9300514176 /* Level.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -165,7 +182,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28B2BEA020BB1B6500514176 /* Level1.swift in Sources */,
+				28B2BEA220BB1B9300514176 /* Level.swift in Sources */,
 				28F0478B20B8F7C200FE9A7F /* GameViewController.swift in Sources */,
+				28B2BE9D20BB102E00514176 /* Game.swift in Sources */,
 				28F0479C20B9FA0900FE9A7F /* Extensions.swift in Sources */,
 				28B2BE9920BA6F9800514176 /* CoreGraphics+Additions.swift in Sources */,
 				28B2BE9720BA6F6100514176 /* JoyStickView.swift in Sources */,

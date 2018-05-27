@@ -12,7 +12,7 @@ import SceneKit
 final class PlayerNode {
     public var node : SCNNode?
     
-    let speed: Float = 0.1
+    let speed: Float = 0.4
     
     var directionAngle: SCNFloat = 0.0 {
         didSet {

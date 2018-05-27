@@ -10,135 +10,31 @@ import UIKit
 import QuartzCore
 import SceneKit
 
-class GameViewController: UIViewController {
-
-    //NODES
-    var baseRig = SCNNode()
-    var player = PlayerNode()
-    var cameraNode = SCNNode()
-    
-    //SCENES
-    var baseScene = SCNScene()
-    var baseCharacter = SCNScene()
+class GameViewController: UIViewController {    
+    //main scene
     var sceneView = SCNView()
-    
-    //ANIMATIONS
-    var idleAnimation = SCNAnimationPlayer()
-    var runAnimation = SCNAnimationPlayer()
     
     //CHILD VIEW CONTROLLERS
     var hudViewController : HUDViewController?
+    var game : Game?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // retrieve the character node
-        self.baseCharacter = SCNScene(named: "art.scnassets/BaseIdle.dae")!
-        
-        setUpAnimations()
-        
-        setUpScene()
-    
-        setUpChildControllers()
-        
-        //test for movement
-        testMovement()
-    }
-    
-    func testMovement() {
-        self.baseCharacter.rootNode.rotation = SCNVector4(0, 0, 1, Float(45).degreesToRadians)
-        self.baseScene.rootNode.rotation = SCNVector4(0, 0, 1, Float(45).degreesToRadians)
-        self.baseRig.rotation = SCNVector4(0, 0, 1, Float(45).degreesToRadians)
-        
-        // action that rotates the node to an angle in radian.
-        let action = SCNAction.rotateTo(
-            x: 0.0,
-            y: .pi/2,
-            z: 0.0,
-            duration: 0.1, usesShortestUnitArc: true
-        )
-        
-        for child in self.baseScene.rootNode.childNodes {
-            
-            print(child.name)
-            if let name = child.name {
-                switch(name)
-                {
-                case "NewBase_blend":
-                    child.runAction(action)
-                    break;
-                default:
-                    break;
-                }
-            }
-            
-        }
-    }
-    
-    func setUpScene() {
-        // create a new scene
-        self.baseScene = SCNScene(named: "art.scnassets/BaseArea.scn")!
-        
-        // create and add a camera to the scene
-        cameraNode.camera = SCNCamera()
-        baseScene.rootNode.addChildNode(cameraNode)
-        
-        // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 6, z: 24)
-        
-        let children = self.baseCharacter.rootNode.childNodes
-        for child in children {
-            self.baseScene.rootNode.addChildNode(child)
-        }
-        
-        // stop it for now so that we can use it later when it's appropriate
-        self.runAnimation.stop()
-        self.player.node = self.baseScene.rootNode.childNode(withName: "Rig", recursively: true)
-        //baseScene.rootNode.addChildNode(self.player?.node)
+        // instantiate the game
+            //the Game class handles the different states of the game, and holds the base components for every view
+        game = Game()
         
         // retrieve the SCNView
         sceneView = self.view as! SCNView
+        sceneView.scene = game?.setUpScene()
         
-        // set the scene to the view
-        sceneView.scene = baseScene
-        
-        // allows the user to manipulate the camera
+        // allows the user to manipulate the camera, set to false
         sceneView.allowsCameraControl = false
         
-        // show statistics such as fps and timing information
+        // show statistics such as fps and timing information, set to false
         sceneView.showsStatistics = false
-    }
-    
-    func setUpAnimations() {
-        //get current idle animation
-        for pair in SCNAnimationPlayer.getAnimationKeys(scene: self.baseCharacter) {
-            print(pair.0)
-            print(pair.1)
-            switch(pair.0)
-            {
-            case "BaseIdle-1":
-                self.idleAnimation = pair.1.animationPlayer(forKey: pair.0)!
-                baseRig = pair.1
-                break;
-            default:
-                break;
-            }
-        }
-        
-        //apply additional animation
-        for pair in SCNAnimationPlayer.getAnimationKeys(scene: SCNScene(named: "art.scnassets/BaseRun.dae")!) {
-            print(pair.0)
-            print(pair.1)
-            switch(pair.0)
-            {
-            case "BaseRun-1":
-                self.runAnimation = pair.1.animationPlayer(forKey: pair.0)!
-                baseRig.addAnimationPlayer(self.runAnimation, forKey: "BaseRun-1")
-                break;
-            default:
-                break;
-            }
-        }
+        setUpChildControllers()
     }
     
     func setUpChildControllers() {
@@ -187,12 +83,10 @@ class GameViewController: UIViewController {
     func ControlPlayer(direction: float2)
     {
         let degree = atan2(direction.x, direction.y)
-        self.player.directionAngle = degree
-        print(direction)
-        print(degree)
+        game?.player.directionAngle = degree
         
         let directionInV3 = float3(x: direction.x, y: 0, z: direction.y)
-        self.player.walkInDirection(directionInV3)
+        game?.player.walkInDirection(directionInV3)
         
         //cameraNode.position.x = self.player.presentation.position.x
         //cameraNode.position.z = self.player.presentation.position.z + 24//needs offset maybe
@@ -221,23 +115,20 @@ class GameViewController: UIViewController {
 }
 
 extension GameViewController: HUDControlDelegate {
+    //control game based ui events from hud
     func joyStickBegan() {
-        print("Joy STICK Began")
-        self.idleAnimation.stop()
-        self.runAnimation.play()
+        game?.idleAnimation.stop()
+        game?.runAnimation.play()
     }
     
     func joyStickMove(direction: float2) {
         //move based on direction
-//        print("ANGLE: \(angle)")
-//        print("DISPLACEMENT: \(displacement)")
         ControlPlayer(direction: direction)
     }
     
     func joyStickEnd() {
-        print("Joy STICK End")
-        self.runAnimation.stop()
-        self.idleAnimation.play()
+        game?.runAnimation.stop()
+        game?.idleAnimation.play()
     }
     
     

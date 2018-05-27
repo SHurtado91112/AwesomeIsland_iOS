@@ -21,6 +21,10 @@ class HUDViewController: UIViewController {
     //delegate
     var delegate: HUDControlDelegate?
     
+    //touch cycle component
+    var touchCycleTimer : Timer?
+    private let cycleTime = 0.02
+    
     //joy stick components
     var joyStickView : JoyStickView!
     var joyStickInUse = false
@@ -127,17 +131,27 @@ class HUDViewController: UIViewController {
     func touchesBeganFromJoyStick(_ touches: Set<UITouch>, with event: UIEvent?) {
         joyStickInUse = true
         delegate?.joyStickBegan()
+        
+        touchCycleTimer = Timer.scheduledTimer(timeInterval: self.cycleTime, target: self, selector: #selector(touchCycleHandler), userInfo: nil, repeats: true)
+        touchCycleTimer?.fire()
     }
     
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    @objc
+    func touchCycleHandler() {
         if(joyStickInUse)
         {
             delegate?.joyStickMove(direction: self.joyStickDirection)
         }
     }
     
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+    }
+    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         if(joyStickInUse) {
+            touchCycleTimer?.invalidate()
+            touchCycleTimer = nil
             delegate?.joyStickEnd()
             joyStickInUse = false
         }

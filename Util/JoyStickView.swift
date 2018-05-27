@@ -139,7 +139,7 @@ public final class JoyStickView: UIView {
         if let parent = parent as? HUDViewController
         {
             parent.touchesBeganFromJoyStick(touches, with: event)
-            handleView.backgroundColor = UIColor.FlatColor.Gray.AlmondFrost
+            handleView.alpha = 0.84
         }
     }
     
@@ -154,15 +154,6 @@ public final class JoyStickView: UIView {
         updatePosition(touch: touch)
         
         guard let touchLocation = self.touch?.location(in: parent.view) else { return }
-        
-        print("ORIGINS")
-        print(self.bounds.origin)
-        print(self.frame.origin)
-        print("LENGTH")
-        print(Float(touchLocation.x - self.bounds.origin.x))
-        print(Float(touchLocation.x - self.frame.origin.x))
-        print(Float(touchLocation.y - self.bounds.origin.y))
-        print(Float(touchLocation.y - self.frame.origin.y))
         
         let middleOfCircleX = self.frame.origin.x
         let middleOfCircleY = self.frame.origin.y
@@ -211,7 +202,7 @@ public final class JoyStickView: UIView {
      */
     private func resetPosition() {
         updateLocation(location: CGPoint(x: frame.midX, y: frame.midY))
-        handleView.backgroundColor = UIColor.FlatColor.Gray.WhiteSmoke
+        handleView.alpha = 0.64
     }
     
     /**
