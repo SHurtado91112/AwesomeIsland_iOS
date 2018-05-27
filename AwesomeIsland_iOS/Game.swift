@@ -17,6 +17,7 @@ class Game {
     var baseRig = SCNNode() // used for applying animation to current character
     var player = PlayerNode() // current playable character, handles positioning and holds ref node
     var cameraNode = SCNNode() // camera for our character
+    let cameraOffset = Float(24)
     
     //SCENES
     var baseScene = SCNScene()
@@ -129,6 +130,21 @@ class Game {
             default:
                 break;
             }
+        }
+    }
+    
+    func controlPlayer(direction: float2)
+    {
+        let degree = atan2(direction.x, direction.y)
+        player.directionAngle = degree
+        
+        let directionInV3 = float3(x: direction.x, y: 0, z: direction.y)
+        player.walkInDirection(directionInV3)
+        
+        if let playerNodePositionX = player.node?.presentation.position.x, let playerNodePositionZ = player.node?.presentation.position.z
+        {
+            cameraNode.position.x = playerNodePositionX
+            cameraNode.position.z = playerNodePositionZ + cameraOffset
         }
     }
 }

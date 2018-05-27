@@ -80,18 +80,6 @@ class GameViewController: UIViewController {
         }
     }
     
-    func ControlPlayer(direction: float2)
-    {
-        let degree = atan2(direction.x, direction.y)
-        game?.player.directionAngle = degree
-        
-        let directionInV3 = float3(x: direction.x, y: 0, z: direction.y)
-        game?.player.walkInDirection(directionInV3)
-        
-        //cameraNode.position.x = self.player.presentation.position.x
-        //cameraNode.position.z = self.player.presentation.position.z + 24//needs offset maybe
-    }
-    
     override var shouldAutorotate: Bool {
         return true
     }
@@ -123,7 +111,7 @@ extension GameViewController: HUDControlDelegate {
     
     func joyStickMove(direction: float2) {
         //move based on direction
-        ControlPlayer(direction: direction)
+        game?.controlPlayer(direction: direction)
     }
     
     func joyStickEnd() {
