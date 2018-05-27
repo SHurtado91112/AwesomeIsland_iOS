@@ -4,8 +4,8 @@
   <contributor>
    <authoring_tool>SceneKit Collada Exporter v1.0</authoring_tool>
   </contributor>
-  <created>2018-05-27T04:34:38Z</created>
-  <modified>2018-05-27T04:34:38Z</modified>
+  <created>2018-05-27T07:43:43Z</created>
+  <modified>2018-05-27T07:43:43Z</modified>
   <unit meter="1.000000"/>
   <up_axis>Z_UP</up_axis>
  </asset>
@@ -1256,7 +1256,7 @@
  </library_controllers>
  <library_visual_scenes>
   <visual_scene id="scene301">
-   <node id="NewBase_blend" name="NewBase_blend">
+   <node id="NewBase_blend" name="Rig">
     <node id="Root" name="Root" type="JOINT">
      <matrix sid="SID_33">1 -8.06252e-10 8.56141e-08 0.00198946 -1.41583e-09 -0.999975 0.00711751 0.518257 8.56594e-08 -0.00711751 -0.999804 -0.03162 0 0 0 1 </matrix>
      <node id="Base" name="Base" sid="SID_53" type="JOINT">

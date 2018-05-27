@@ -53,11 +53,26 @@ class GameViewController: UIViewController {
         // action that rotates the node to an angle in radian.
         let action = SCNAction.rotateTo(
             x: 0.0,
-            y: 1.6,
+            y: .pi/2,
             z: 0.0,
             duration: 0.1, usesShortestUnitArc: true
         )
-        self.baseRig.runAction(action)
+        
+        for child in self.baseScene.rootNode.childNodes {
+            
+            print(child.name)
+            if let name = child.name {
+                switch(name)
+                {
+                case "NewBase_blend":
+                    child.runAction(action)
+                    break;
+                default:
+                    break;
+                }
+            }
+            
+        }
     }
     
     func setUpScene() {
@@ -70,7 +85,6 @@ class GameViewController: UIViewController {
         
         // place the camera
         cameraNode.position = SCNVector3(x: 0, y: 6, z: 24)
-        self.player.node = self.baseCharacter.rootNode.childNode(withName: "Base", recursively: true)
         
         let children = self.baseCharacter.rootNode.childNodes
         for child in children {
@@ -79,7 +93,7 @@ class GameViewController: UIViewController {
         
         // stop it for now so that we can use it later when it's appropriate
         self.runAnimation.stop()
-        
+        self.player.node = self.baseScene.rootNode.childNode(withName: "Rig", recursively: true)
         //baseScene.rootNode.addChildNode(self.player?.node)
         
         // retrieve the SCNView
