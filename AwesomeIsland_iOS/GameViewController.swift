@@ -14,78 +14,124 @@ class GameViewController: UIViewController {
 
     //NODES
     var baseRig = SCNNode()
-    var base = SCNNode()
+    var player = PlayerNode()
+    var cameraNode = SCNNode()
     
     //SCENES
     var baseScene = SCNScene()
     var baseCharacter = SCNScene()
+    var sceneView = SCNView()
     
     //ANIMATIONS
     var idleAnimation = SCNAnimationPlayer()
+    var runAnimation = SCNAnimationPlayer()
+    
+    //CHILD VIEW CONTROLLERS
+    var hudViewController : HUDViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // retrieve the character node
+        self.baseCharacter = SCNScene(named: "art.scnassets/BaseIdle.dae")!
+        
+        setUpAnimations()
+        
+        setUpScene()
+    
+        setUpChildControllers()
+        
+        //test for movement
+        testMovement()
+    }
+    
+    func testMovement() {
+        self.baseCharacter.rootNode.rotation = SCNVector4(0, 0, 1, Float(45).degreesToRadians)
+        self.baseScene.rootNode.rotation = SCNVector4(0, 0, 1, Float(45).degreesToRadians)
+        self.baseRig.rotation = SCNVector4(0, 0, 1, Float(45).degreesToRadians)
+        
+        // action that rotates the node to an angle in radian.
+        let action = SCNAction.rotateTo(
+            x: 0.0,
+            y: 1.6,
+            z: 0.0,
+            duration: 0.1, usesShortestUnitArc: true
+        )
+        self.baseRig.runAction(action)
+    }
+    
+    func setUpScene() {
         // create a new scene
         self.baseScene = SCNScene(named: "art.scnassets/BaseArea.scn")!
         
         // create and add a camera to the scene
-        let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         baseScene.rootNode.addChildNode(cameraNode)
         
         // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 12, z: 24)
-        
-        // retrieve the character node
-        self.baseCharacter = SCNScene(named: "art.scnassets/BaseIdle.dae")!
-        
-        for pair in SCNAnimationPlayer.getAnimationKeys(scene: self.baseCharacter) {
-            print(pair.0)
-            switch(pair.0)
-            {
-                case "BaseIdle-1":
-                    self.idleAnimation = pair.1.animationPlayer(forKey: pair.0)!
-                    break;
-                default:
-                    break;
-            }
-        }
-        
-        // animate the 3d object
-        self.base = self.baseCharacter.rootNode.childNode(withName: "Base", recursively: true)!
-        self.baseRig = self.baseCharacter.rootNode.childNode(withName: "BaseRig", recursively: true)!
+        cameraNode.position = SCNVector3(x: 0, y: 6, z: 24)
+        self.player.node = self.baseCharacter.rootNode.childNode(withName: "Base", recursively: true)
         
         let children = self.baseCharacter.rootNode.childNodes
         for child in children {
             self.baseScene.rootNode.addChildNode(child)
         }
         
-        self.idleAnimation.stop() // stop it for now so that we can use it later when it's appropriate
+        // stop it for now so that we can use it later when it's appropriate
+        self.runAnimation.stop()
         
-        baseScene.rootNode.addChildNode(self.base)
-        baseScene.rootNode.addChildNode(self.baseRig)
+        //baseScene.rootNode.addChildNode(self.player?.node)
         
         // retrieve the SCNView
-        let scnView = self.view as! SCNView
+        sceneView = self.view as! SCNView
         
         // set the scene to the view
-        scnView.scene = baseScene
+        sceneView.scene = baseScene
         
         // allows the user to manipulate the camera
-        scnView.allowsCameraControl = true
+        sceneView.allowsCameraControl = false
         
         // show statistics such as fps and timing information
-        scnView.showsStatistics = true
-        
-        // add a tap gesture recognizer
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        scnView.addGestureRecognizer(tapGesture)
-        
-        let delayInSeconds = 2.4
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + delayInSeconds) {
-            self.idleAnimation.play()
+        sceneView.showsStatistics = false
+    }
+    
+    func setUpAnimations() {
+        //get current idle animation
+        for pair in SCNAnimationPlayer.getAnimationKeys(scene: self.baseCharacter) {
+            print(pair.0)
+            print(pair.1)
+            switch(pair.0)
+            {
+            case "BaseIdle-1":
+                self.idleAnimation = pair.1.animationPlayer(forKey: pair.0)!
+                baseRig = pair.1
+                break;
+            default:
+                break;
+            }
         }
+        
+        //apply additional animation
+        for pair in SCNAnimationPlayer.getAnimationKeys(scene: SCNScene(named: "art.scnassets/BaseRun.dae")!) {
+            print(pair.0)
+            print(pair.1)
+            switch(pair.0)
+            {
+            case "BaseRun-1":
+                self.runAnimation = pair.1.animationPlayer(forKey: pair.0)!
+                baseRig.addAnimationPlayer(self.runAnimation, forKey: "BaseRun-1")
+                break;
+            default:
+                break;
+            }
+        }
+    }
+    
+    func setUpChildControllers() {
+        self.hudViewController = HUDViewController()
+        self.hudViewController?.delegate = self
+        
+        self.hudViewController?.addToParent(parent: self)
     }
     
     @objc
@@ -124,6 +170,20 @@ class GameViewController: UIViewController {
         }
     }
     
+    func ControlPlayer(direction: float2)
+    {
+        let degree = atan2(direction.x, direction.y)
+        self.player.directionAngle = degree
+        print(direction)
+        print(degree)
+        
+        let directionInV3 = float3(x: direction.x, y: 0, z: direction.y)
+        self.player.walkInDirection(directionInV3)
+        
+        //cameraNode.position.x = self.player.presentation.position.x
+        //cameraNode.position.z = self.player.presentation.position.z + 24//needs offset maybe
+    }
+    
     override var shouldAutorotate: Bool {
         return true
     }
@@ -146,27 +206,25 @@ class GameViewController: UIViewController {
     }
 }
 
-extension SCNAnimationPlayer {
-    class func getAnimationKeys(scene: SCNScene) -> [(String, SCNNode)] {
-        var keys = [(String, SCNNode)]()
-        scene.rootNode.enumerateChildNodes { (child, stop) in
-            if !child.animationKeys.isEmpty {
-                keys.append((child.animationKeys[0], child))
-            }
-        }
-        return keys
+extension GameViewController: HUDControlDelegate {
+    func joyStickBegan() {
+        print("Joy STICK Began")
+        self.idleAnimation.stop()
+        self.runAnimation.play()
     }
     
-    class func loadAnimation(fromSceneNamed sceneName: String) -> SCNAnimationPlayer {
-        let scene = SCNScene( named: sceneName )!
-        // find top level animation
-        var animationPlayer: SCNAnimationPlayer! = nil
-        scene.rootNode.enumerateChildNodes { (child, stop) in
-            if !child.animationKeys.isEmpty {
-                animationPlayer = child.animationPlayer(forKey: child.animationKeys[0])
-                stop.pointee = true
-            }
-        }
-        return animationPlayer
+    func joyStickMove(direction: float2) {
+        //move based on direction
+//        print("ANGLE: \(angle)")
+//        print("DISPLACEMENT: \(displacement)")
+        ControlPlayer(direction: direction)
     }
+    
+    func joyStickEnd() {
+        print("Joy STICK End")
+        self.runAnimation.stop()
+        self.idleAnimation.play()
+    }
+    
+    
 }

@@ -8,7 +8,38 @@
 
 import Foundation
 import UIKit
+import QuartzCore
+import SceneKit
 
+//SCNANIMATIONPLAYER
+extension SCNAnimationPlayer {
+    class func getAnimationKeys(scene: SCNScene) -> [(String, SCNNode)] {
+        var keys = [(String, SCNNode)]()
+        scene.rootNode.enumerateChildNodes { (child, stop) in
+            if !child.animationKeys.isEmpty {
+                for animation in child.animationKeys {
+                    keys.append((animation, child))
+                }
+            }
+        }
+        return keys
+    }
+    
+    class func loadAnimation(fromSceneNamed sceneName: String) -> SCNAnimationPlayer {
+        let scene = SCNScene( named: sceneName )!
+        // find top level animation
+        var animationPlayer: SCNAnimationPlayer! = nil
+        scene.rootNode.enumerateChildNodes { (child, stop) in
+            if !child.animationKeys.isEmpty {
+                animationPlayer = child.animationPlayer(forKey: child.animationKeys[0])
+                stop.pointee = true
+            }
+        }
+        return animationPlayer
+    }
+}
+
+//UICOLOR
 extension UIColor {
     
     struct FlatColor {
@@ -69,4 +100,30 @@ extension UIColor {
     convenience init(netHex:Int) {
         self.init(red:(netHex >> 16) & 0xff, green:(netHex >> 8) & 0xff, blue:netHex & 0xff)
     }
+}
+
+//UIVIEW
+extension UIView {
+    class func setRounded(view: UIView) {
+        view.clipsToBounds = true
+        view.layer.cornerRadius = view.frame.width/2
+    }
+    
+    class func addShadow(view: UIView) {
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOpacity = 0.84
+        view.layer.shadowOffset = CGSize.zero
+        view.layer.shadowRadius = 10
+    }
+}
+
+//BINARY INTEGER
+extension BinaryInteger {
+    var degreesToRadians: CGFloat { return CGFloat(Int(self)) * .pi / 180 }
+}
+
+//FLOATING POINT
+extension FloatingPoint {
+    var degreesToRadians: Self { return self * .pi / 180 }
+    var radiansToDegrees: Self { return self * 180 / .pi }
 }
